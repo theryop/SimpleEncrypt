@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	bool process = false; // true for encrypt, false for decrypt
+	bool process = true; // true for encrypt, false for decrypt
 	bool keytype = true; // true for binary, false for hex
 	int counter = 0;
 	string keyfile = "key.txt";
@@ -40,37 +40,27 @@ int main(int argc, char *argv[])
 			}
 			if (found != string::npos)
 			{
-				keyfile = comptemp.substr(3,comptemp.size() - 2);
+				//keyfile = comptemp.substr(3,comptemp.size() - 2);
 			}	
 			counter++;
 		}
 	}
 	
-	//ifstream key;
-	//key.open (keyfile);
-	//getline(key, keyline);
-	keyline = "0f1e2d3c4b5a6978";
+	string keypos = keyfile;
+	ifstream key;
+	key.open ("key.txt");
+	getline(key, keyline);
+	//keyline = "0f1e2d3c4b5a6978";
 	
-	//int ui = getchar();
+	int ui = getchar();
 	vector<char> useri;
 	vector<char> usero;
-	//while (ui != EOF) // reads inputstream and fills input string with chosen input
-	//{
-	//	if (ui != ' ')
-	//	{
-	//		useri.push_back(ui);
-	//	}
-	//	ui = getchar();
-	//}
+	while (ui != EOF) // reads inputstream and fills input string with chosen input
+	{
+		useri.push_back(ui);
+		ui = getchar();
+	}
 	
-	useri.push_back('d');
-	useri.push_back('2');
-	useri.push_back(' ');
-	useri.push_back('3');
-	useri.push_back('4');
-	useri.push_back(' ');
-	useri.push_back('3');
-	useri.push_back('d');
 	
 	if (process) // encryption
 	{
@@ -83,7 +73,6 @@ int main(int argc, char *argv[])
 			numval = numval / 16;
 			char charval = keyline.at(numval);
 			char charrem = keyline.at(remain);
-			cout << charval << " & " << charrem << endl;
 			usero.push_back(charval);
 			usero.push_back(charrem);
 			usero.push_back(' '); 
