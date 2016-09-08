@@ -4,24 +4,27 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdexcept>
+#include <limits>
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
 	bool process = true; // true for encrypt, false for decrypt
-	bool keytype = true; // true for binary, false for hex
+	bool keytype = false; // true for binary, false for hex
 	int counter = 0;
 	string keyfile = "key.txt";
 	string keyline;
 	if (argc > 1)
 	{
-		counter = 1;
-		
+		counter = 0;
 		string comptemp = string(argv[counter]);
-		size_t found = comptemp.find("-k<");
+		size_t found = comptemp.find("-k");
 		while (counter < argc)
 		{
+			comptemp = string(argv[counter]);
+			found = comptemp.find("-k");
 			if ((comptemp)== "-d")
 			{
 				process = false;
@@ -40,17 +43,33 @@ int main(int argc, char *argv[])
 			}
 			if (found != string::npos)
 			{
-				//keyfile = comptemp.substr(3,comptemp.size() - 2);
+				keyfile = comptemp.substr(2,comptemp.size() - 2);
+				cout << "keyfile is now " << keyfile << endl;
 			}	
 			counter++;
 		}
 	}
-	
-	string keypos = keyfile;
-	ifstream key;
-	key.open ("key.txt");
+	ifstream key (keyfile.c_str());
+	if (!key.is_open())
+	{
+		throw invalid_argument("key file not found");
+		exit(1);		
+	}
 	getline(key, keyline);
-	//keyline = "0f1e2d3c4b5a6978";
+	if (!keytype)
+	{
+		counter = 0;
+		while ((unsigned)counter < keyline.size())
+		{
+			char check = keyline.at(counter);
+			if (!(((+check < 58) && (+check > 47)) || ((+check < 103) && (+check > 96))))
+			{
+				throw invalid_argument("key is not in hexidecimal format.");
+				exit(1);
+			}
+			counter++;
+		}
+	}
 	
 	int ui = getchar();
 	vector<char> useri;
